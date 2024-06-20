@@ -59,8 +59,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/api//logout")) // 로그아웃을 GET 방식으로 처리
-                        .logoutUrl("/logout")
+                        .logoutUrl("/api/logout") // 로그아웃 URL
                         .logoutSuccessUrl("/login.html?logout")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
