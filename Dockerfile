@@ -11,7 +11,8 @@ FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
 RUN apt-get update && apt-get install -y \
     iptables \
     fuse-overlayfs \
-    sudo
+    sudo \
+    curl
 
 # Docker 설치 파일을 복사
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
@@ -21,11 +22,20 @@ COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
 COPY --from=docker /usr/local/bin/containerd /usr/local/bin/containerd
 COPY --from=docker /usr/local/bin/runc /usr/local/bin/runc
 
-# Docker 그룹 추가
+# Docker 그룹 추가 및 gradle 사용자에 추가
 RUN groupadd -g 999 docker && usermod -aG docker gradle
-# Docker 데몬 프록시 설정
+
+# Docker 데몬 프록시 설정 (필요시)
 RUN mkdir -p /etc/systemd/system/docker.service.d
 RUN echo "[Service]\nEnvironment=\"HTTP_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"HTTPS_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"NO_PROXY=localhost,127.0.0.1,::1\"" > /etc/systemd/system/docker.service.d/http-proxy.conf
+
+# Docker 데몬 실행
+RUN service docker start
+
+# 필요한 Docker 이미지를 미리 다운로드
+RUN docker pull gcc:latest
+RUN docker pull openjdk:11-jdk-slim
+RUN docker pull python:3.8-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -34,7 +44,7 @@ WORKDIR /app
 COPY . .
 
 # gradle 빌드 시 proxy 설정을 gradle.properties에 추가
-RUN echo "systemProp.http.proxyHost=krmp-proxy.9rum.cc\nsystemProp.http.proxyPort=3128\nsystemProp.https.proxyHost=krmp-proxy.9rum.cc\nsystemProp.https.proxyPort=3128" > /root/.gradle/gradle.properties
+RUN echo "systemProp.http.proxyHost=10.41.254.16\nsystemProp.http.proxyPort=3128\nsystemProp.https.proxyHost=10.41.254.16\nsystemProp.https.proxyPort=3128" > /root/.gradle/gradle.properties
 
 # gradlew에 실행 권한 부여
 RUN chmod +x gradlew
