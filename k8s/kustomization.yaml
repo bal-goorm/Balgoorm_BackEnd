@@ -3,8 +3,7 @@ resources:
     - nginx.yaml
     - mariadb.yaml
     - backend.yaml
-	- ingress.yaml
-	
+    - ingress.yaml
 configMapGenerator:
     - name: nginx
       files:
