@@ -29,6 +29,10 @@ spec:
               path: /api/test
               port: 8080
             initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
 ---
 apiVersion: v1
 kind: Service
