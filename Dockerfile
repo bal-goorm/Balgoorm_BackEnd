@@ -1,5 +1,5 @@
 # 베이스 이미지로 gradle 이미지 사용
-FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
+FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17 AS builder
 
 # 필요한 패키지 설치
 RUN apt-get update && apt-get install -y \
@@ -26,14 +26,12 @@ RUN groupadd -g 999 docker && usermod -aG docker gradle
 RUN mkdir -p /etc/systemd/system/docker.service.d
 RUN echo "[Service]\nEnvironment=\"HTTP_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"HTTPS_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"NO_PROXY=localhost,127.0.0.1,::1\"" > /etc/systemd/system/docker.service.d/http-proxy.conf
 
-# Docker 데몬 실행
+# Docker 데몬 실행 및 필요한 이미지 다운로드
 RUN dockerd --host=unix:///var/run/docker.sock & \
-    while(! docker info > /dev/null 2>&1); do sleep 1; done
-
-# 필요한 Docker 이미지 다운로드
-RUN docker pull gcc:latest
-RUN docker pull openjdk:11-jdk-slim
-RUN docker pull python:3.8-slim
+    sleep 10 && \
+    docker pull gcc:latest && \
+    docker pull openjdk:11-jdk-slim && \
+    docker pull python:3.8-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app
