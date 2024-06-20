@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     iptables \
     fuse-overlayfs \
     sudo \
-    curl
+    curl \
+    git
 
 # Docker 설치를 위한 단계
 FROM docker:latest as docker
@@ -24,7 +25,7 @@ RUN groupadd -g 999 docker && usermod -aG docker gradle
 
 # Docker 데몬 설정
 RUN mkdir -p /etc/systemd/system/docker.service.d
-RUN echo "[Service]\nEnvironment=\"HTTP_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"HTTPS_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"NO_PROXY=localhost,127.0.0.1,::1\"" > /etc/systemd/system/docker.service.d/http-proxy.conf
+RUN echo -e "[Service]\nEnvironment=\"HTTP_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"HTTPS_PROXY=http://10.41.254.16:3128\"\nEnvironment=\"NO_PROXY=localhost,127.0.0.1,::1\"" > /etc/systemd/system/docker.service.d/http-proxy.conf
 
 # Docker 데몬 실행 및 필요한 이미지 다운로드
 RUN dockerd --host=unix:///var/run/docker.sock & \
@@ -40,7 +41,7 @@ WORKDIR /app
 COPY . .
 
 # gradle 빌드 시 proxy 설정을 gradle.properties에 추가
-RUN echo "systemProp.http.proxyHost=10.41.254.16\nsystemProp.http.proxyPort=3128\nsystemProp.https.proxyHost=10.41.254.16\nsystemProp.https.proxyPort=3128" > /root/.gradle/gradle.properties
+RUN echo -e "systemProp.http.proxyHost=10.41.254.16\nsystemProp.http.proxyPort=3128\nsystemProp.https.proxyHost=10.41.254.16\nsystemProp.https.proxyPort=3128" > /root/.gradle/gradle.properties
 
 # gradlew에 실행 권한 부여
 RUN chmod +x gradlew
