@@ -35,4 +35,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Docker 데몬 실행 및 애플리케이션 시작
 CMD ["docker-entrypoint.sh"]
 
-CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
+# CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
