@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ide")
+@RequestMapping("/api/ide")
 public class IdeController {
 
     private final IdeService ideService;

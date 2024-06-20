@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/quiz")
+@RequestMapping("/api/quiz")
 @Slf4j
 public class QuizController {
 
