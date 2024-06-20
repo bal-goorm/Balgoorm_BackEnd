@@ -1,5 +1,5 @@
 # 베이스 이미지로 gradle 이미지 사용
-FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17 AS builder
+FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
 
 # 필요한 패키지 설치
 RUN apt-get update && apt-get install -y \
