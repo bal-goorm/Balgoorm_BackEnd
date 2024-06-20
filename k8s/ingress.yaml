@@ -1,19 +1,19 @@
 apiVersion: app/v1
 kind: Ingress
 metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
-  labels:
-    app.kubernetes.io/managed-by: kargocd
-  name: krampoline
-  namespace: default
+    annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+    labels:
+        app.kubernetes.io/managed-by: kargocd
+    name: krampoline
+    namespace: default
 spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              serviceName: krampoline
-              servicePort: 80
+    rules:
+        - http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        serviceName: krampoline
+                        servicePort: 80
