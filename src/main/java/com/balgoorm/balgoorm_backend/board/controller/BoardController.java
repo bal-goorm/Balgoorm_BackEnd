@@ -7,6 +7,7 @@ import com.balgoorm.balgoorm_backend.board.model.dto.response.BoardResponseDTO;
 import com.balgoorm.balgoorm_backend.board.service.BoardService;
 import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +18,14 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/boards")
+@RequestMapping("/api/boards")
 public class BoardController {
 
     private final BoardService boardService;
+
+    @Value("${board.list.size}")
+    private int pageSize;
+
 
     @GetMapping("/{id}")
     public BoardResponseDTO searchBoard(@PathVariable("id") Long boardId) {
@@ -30,7 +35,6 @@ public class BoardController {
     @GetMapping
     public List<BoardResponseDTO> searchBoardList(
             @RequestParam("page") int page,
-            @RequestParam("pageSize") int pageSize,
             @RequestParam("direction") Sort.Direction direction,
             @RequestParam("sortBy") String sortBy) {
         return boardService.searchBoardList(page, pageSize, direction.name(), sortBy);

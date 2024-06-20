@@ -51,7 +51,7 @@ public class SecurityConfig {
                 )
                 .formLogin(login -> login
                         .loginPage("/login.html") // 로그인 폼
-                        .loginProcessingUrl("/login") // 로그인 폼이 제출될 URL 설정
+                        .loginProcessingUrl("/api/login") // 로그인 폼이 제출될 URL 설정
                         .successHandler(customAuthenticationSuccessHandler) // 로그인 성공 시 커스텀 핸들러
                         .failureUrl("/login.html?error=true") // 실패했을 때 리턴하는 주소
                         .usernameParameter("userId") // 해당 메소드에 적은 userId를 login form에 적힌 userId와 일치 시킴
@@ -59,12 +59,12 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/api//logout")) // 로그아웃을 GET 방식으로 처리
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login.html?logout")
                         .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
-                        .permitAll()
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // 로그아웃을 GET 방식으로 처리
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)

@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     // 전체 회원을 조회하는 API
-    @GetMapping("/admin/all") // 회원 정보에 비밀번호도 다 포함되어서 비밀번호는 뺄지 고민 중
+    @GetMapping("/admin/all")
     public ResponseEntity<List<User>> getAllMembers() {
         List<User> users = userService.getAllMembers();
         return ResponseEntity.ok(users);
@@ -72,13 +73,9 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("/deleteUser/{userid}")
-    public ResponseEntity<String> deleteUser(@PathVariable("userid") String userId, @RequestParam String password) {
-        if (userService.checkPassword(userId, password)) {
-            userService.deleteUser(userId, password);
-            return ResponseEntity.ok("회원이 탈퇴되셨습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
-        }
+    public ResponseEntity<String> deleteUser(@PathVariable("userid") String userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("회원이 탈퇴되셨습니다.");
     }
 
 

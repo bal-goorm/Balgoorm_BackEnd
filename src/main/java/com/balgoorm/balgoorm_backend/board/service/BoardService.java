@@ -47,6 +47,8 @@ public class BoardService {
     @Value("${file.boardImagePath}")
     private String uploadFolder;
 
+
+
     @Transactional(readOnly = true)
     public Board getBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElse(null);

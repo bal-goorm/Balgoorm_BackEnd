@@ -110,17 +110,9 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String userId, String password) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (passwordEncoder.matches(password, user.getUserPassword())) {
-                userRepository.delete(user);
-            } else {
-                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-            }
-        } else {
-            throw new IllegalArgumentException("유저를 찾을 수 없습니다.");
-        }
+    public void deleteUser(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        userRepository.delete(user);
     }
 }
