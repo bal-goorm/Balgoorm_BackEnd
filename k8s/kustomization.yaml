@@ -1,5 +1,5 @@
 namespace: default
-resources:https://www.notion.so/dcee9c1adff04580a2ddbe0847f888ab?v=c383797737a443a685fa1727fa341baa
+resources:
     - nginx.yaml
     - mariadb.yaml
     - backend.yaml
