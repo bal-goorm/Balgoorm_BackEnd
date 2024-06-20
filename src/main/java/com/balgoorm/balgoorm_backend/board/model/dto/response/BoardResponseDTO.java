@@ -19,6 +19,8 @@ public class BoardResponseDTO {
     private List<CommentResponseDTO> comments; // 댓글 리스트 추가
     private int likesCount;
     private int views;
+    private String userId;
+    private String Nickname;// 작성자 ID 추가
 
     @Builder
     public BoardResponseDTO(Board board) {
@@ -34,5 +36,7 @@ public class BoardResponseDTO {
                 .collect(Collectors.toList());
         this.likesCount = board.getLikesCount();
         this.views = board.getViewCount();
+        this.userId = board.getUser().getUserId();
+        this.Nickname = board.getUser().getNickname();// 작성자 ID 설정
     }
 }

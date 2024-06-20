@@ -14,6 +14,7 @@ public class CommentResponseDTO {
     private LocalDateTime commentCreateDate;
     private String userId;
     private Long boardId;
+    private String Nickname;// 닉네임 추가
 
     public CommentResponseDTO(Comment comment) {
         this.commentId = comment.getCommentId();
@@ -21,5 +22,6 @@ public class CommentResponseDTO {
         this.commentCreateDate = comment.getCommentCreateDate();
         this.userId = comment.getUser().getUserId();
         this.boardId = comment.getBoard().getBoardId();
+        this.Nickname = comment.getUser().getNickname();
     }
 }

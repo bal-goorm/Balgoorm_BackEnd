@@ -40,6 +40,7 @@ public class BoardController {
         return boardService.searchBoardList(page, pageSize, direction.name(), sortBy);
     }
 
+
     @PostMapping
     public BoardResponseDTO createBoard(BoardWriteRequestDTO boardWriteRequestDTO,
                                         @ModelAttribute BoardImageUploadDTO boardImageUploadDTO,
@@ -48,6 +49,7 @@ public class BoardController {
         Long boardId = boardService.saveBoard(boardWriteRequestDTO, boardImageUploadDTO, userDetails.getUsername());
         return boardService.searchBoard(boardId);
     }
+
 
     @PutMapping("/{id}")
     public BoardResponseDTO editBoard(@PathVariable("id") Long boardId,
@@ -58,9 +60,10 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBoard(@PathVariable("id") Long boardId, Authentication authentication) {
+    public BoardResponseDTO deleteBoard(@PathVariable("id") Long boardId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         boardService.deleteBoard(boardId, userDetails.getUsername());
+        return boardService.searchBoard(boardId); // 삭제 후에도 BoardResponseDTO 반환
     }
 
     @PostMapping("/{id}/like")
@@ -82,3 +85,4 @@ public class BoardController {
         return "Unliked the board";
     }
 }
+

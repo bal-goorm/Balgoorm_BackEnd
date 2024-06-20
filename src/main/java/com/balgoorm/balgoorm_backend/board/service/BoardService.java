@@ -76,10 +76,11 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+
     @Transactional
     public Long saveBoard(BoardWriteRequestDTO boardWriteRequestDTO, BoardImageUploadDTO boardImageUploadDTO, String userId) {
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자 ID에 해당하는 회원이 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("유저 ID가 존재하지 않습니다."));
 
         Board board = Board.builder()
                 .boardTitle(boardWriteRequestDTO.getBoardTitle())
@@ -128,24 +129,29 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDTO editBoard(Long boardId, BoardEditRequest boardEditRequest, String userId) throws IOException {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (!board.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("다른 사용자의 게시글은 수정할 수 없습니다.");
         }
         board.setBoardTitle(boardEditRequest.getBoardTitle());
         board.setBoardContent(boardEditRequest.getBoardContent());
 
+
         boardRepository.save(board);
         return new BoardResponseDTO(board);
     }
 
+
     @Transactional
-    public void deleteBoard(Long boardId, String userId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    public BoardResponseDTO deleteBoard(Long boardId, String userId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (!board.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("다른 사용자의 게시글은 삭제할 수 없습니다.");
         }
         boardRepository.deleteById(boardId);
+        return new BoardResponseDTO(board);
     }
 
     @Transactional
