@@ -23,6 +23,9 @@ COPY --from=docker /usr/local/bin/runc /usr/local/bin/runc
 
 # Docker 그룹 추가
 RUN groupadd -g 999 docker && usermod -aG docker gradle
+# Docker 데몬 프록시 설정
+RUN mkdir -p /etc/systemd/system/docker.service.d
+RUN echo "[Service]\nEnvironment=\"HTTP_PROXY=http://krmp-proxy.9rum.cc:3128\"\nEnvironment=\"HTTPS_PROXY=http://krmp-proxy.9rum.cc:3128\"\nEnvironment=\"NO_PROXY=localhost,127.0.0.1,::1\"" > /etc/systemd/system/docker.service.d/http-proxy.conf
 
 # 작업 디렉토리 설정
 WORKDIR /app
