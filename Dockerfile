@@ -11,6 +11,6 @@ RUN echo "systemProp.http.proxyHost=krmp-proxy.9rum.cc\nsystemProp.http.proxyPor
 RUN chmod +x gradlew
 
 # Gradle 캐시를 활용하여 빌드 시간 단축
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
