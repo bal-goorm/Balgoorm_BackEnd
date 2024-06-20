@@ -13,9 +13,6 @@ COPY --from=docker /usr/local/bin/dockerd /usr/local/bin/dockerd
 COPY --from=docker /usr/local/bin/docker-init /usr/local/bin/docker-init
 COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
 
-# Docker 데몬 실행에 필요한 추가 파일 복사 (optional)
-# COPY --from=docker /etc/docker/daemon.json /etc/docker/daemon.json
-
 # 작업 디렉토리 설정
 WORKDIR /app
 
@@ -31,7 +28,11 @@ RUN chmod +x gradlew
 # Gradle 캐시를 활용하여 빌드 시간 단축
 RUN ./gradlew clean build -x test
 
-# Docker 데몬 시작
-CMD ["dockerd"]
+# Docker 데몬 실행 및 애플리케이션 실행을 위한 스크립트 작성
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Docker 데몬 실행 및 애플리케이션 시작
+CMD ["docker-entrypoint.sh"]
 
 CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
