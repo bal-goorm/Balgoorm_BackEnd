@@ -1,4 +1,7 @@
 #!/bin/sh
+# containerd를 백그라운드에서 실행
+containerd &
+
 # Docker 데몬을 백그라운드에서 실행
 dockerd --host=unix:///var/run/docker.sock &
 

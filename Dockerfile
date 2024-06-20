@@ -12,6 +12,10 @@ COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker /usr/local/bin/dockerd /usr/local/bin/dockerd
 COPY --from=docker /usr/local/bin/docker-init /usr/local/bin/docker-init
 COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
+COPY --from=docker /usr/local/bin/containerd /usr/local/bin/containerd
+COPY --from=docker /usr/local/bin/containerd-shim /usr/local/bin/containerd-shim
+COPY --from=docker /usr/local/bin/containerd-shim-runc-v2 /usr/local/bin/containerd-shim-runc-v2
+COPY --from=docker /usr/local/bin/runc /usr/local/bin/runc
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -28,11 +32,9 @@ RUN chmod +x gradlew
 # Gradle 캐시를 활용하여 빌드 시간 단축
 RUN ./gradlew clean build -x test
 
-# Docker 데몬 실행 및 애플리케이션 실행을 위한 스크립트 작성
+# docker-entrypoint.sh 파일 복사 및 실행 권한 부여
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Docker 데몬 실행 및 애플리케이션 시작
+# Docker 데몬 시작 및 애플리케이션 시작
 CMD ["docker-entrypoint.sh"]
-
-# CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
