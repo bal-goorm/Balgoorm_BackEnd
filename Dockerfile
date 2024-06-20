@@ -13,8 +13,6 @@ COPY --from=docker /usr/local/bin/dockerd /usr/local/bin/dockerd
 COPY --from=docker /usr/local/bin/docker-init /usr/local/bin/docker-init
 COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
 COPY --from=docker /usr/local/bin/containerd /usr/local/bin/containerd
-COPY --from=docker /usr/local/bin/containerd-shim /usr/local/bin/containerd-shim
-COPY --from=docker /usr/local/bin/containerd-shim-runc-v2 /usr/local/bin/containerd-shim-runc-v2
 COPY --from=docker /usr/local/bin/runc /usr/local/bin/runc
 
 # 작업 디렉토리 설정
