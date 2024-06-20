@@ -7,6 +7,12 @@ FROM docker:latest as docker
 # gradle 이미지에 Docker 설치
 FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
 
+# 필요한 패키지 설치
+RUN apt-get update && apt-get install -y \
+    iptables \
+    fuse-overlayfs \
+    sudo
+
 # Docker 설치 파일을 복사
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker /usr/local/bin/dockerd /usr/local/bin/dockerd
@@ -14,6 +20,9 @@ COPY --from=docker /usr/local/bin/docker-init /usr/local/bin/docker-init
 COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
 COPY --from=docker /usr/local/bin/containerd /usr/local/bin/containerd
 COPY --from=docker /usr/local/bin/runc /usr/local/bin/runc
+
+# Docker 그룹 추가
+RUN groupadd -g 999 docker && usermod -aG docker gradle
 
 # 작업 디렉토리 설정
 WORKDIR /app
