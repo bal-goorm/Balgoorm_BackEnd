@@ -2,7 +2,6 @@
 FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
 
 # Docker 설치를 위한 단계
-# 베이스 이미지로 Docker DinD 사용
 FROM docker:latest as docker
 
 # gradle 이미지에 Docker 설치
@@ -12,7 +11,10 @@ FROM krmp-d2hub-idock.9rum.cc/goorm/gradle:7.3.1-jdk17
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker /usr/local/bin/dockerd /usr/local/bin/dockerd
 COPY --from=docker /usr/local/bin/docker-init /usr/local/bin/docker-init
-COPY --from=docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
+COPY --from/docker /usr/local/bin/docker-proxy /usr/local/bin/docker-proxy
+
+# Docker 데몬 실행에 필요한 추가 파일 복사
+COPY --from=docker /etc/docker/daemon.json /etc/docker/daemon.json
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -29,6 +31,6 @@ RUN chmod +x gradlew
 # Gradle 캐시를 활용하여 빌드 시간 단축
 RUN ./gradlew clean build -x test
 
-# Docker 데몬 시작
-CMD ["dockerd-entrypoint.sh"]
+# Docker 데몬 실행
+CMD ["dockerd"]
 CMD ["java", "-jar", "/app/build/libs/Balgoorm_BackEnd-0.0.1-SNAPSHOT.jar"]
