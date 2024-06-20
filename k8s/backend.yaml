@@ -16,6 +16,12 @@ spec:
         - name: backend
           # 여러분의 backend image 주소를 입력해주세요.
           image: krmp-d2hub-idock.9rum.cc/dev-test/repo_cb4c39a59dcc
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - name: docker-socket
+            mountPath: /var/run/docker.sock
+          
           env:
             - name: TZ
               value: Asia/Seoul
@@ -33,6 +39,10 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
