@@ -4,6 +4,8 @@ import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetails;
 import com.balgoorm.balgoorm_backend.user.dto.request.UserLoginRequest;
 import com.balgoorm.balgoorm_backend.user.dto.request.UserSignupRequest;
 import com.balgoorm.balgoorm_backend.user.dto.request.UserUpdateRequest;
+import com.balgoorm.balgoorm_backend.user.dto.response.MyInfoResponseDTO;
+import com.balgoorm.balgoorm_backend.user.dto.response.UserResponseDTO;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +78,13 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable("userid") String userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok("회원이 탈퇴되셨습니다.");
+    }
+
+    // 로그인한 유저의 정보를 조회하는 API
+    @GetMapping("/myinfo")
+    public ResponseEntity<MyInfoResponseDTO> myinfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MyInfoResponseDTO myInfoResponseDTO = userService.getUserInfo(customUserDetails.getUserId());
+        return ResponseEntity.ok(myInfoResponseDTO);
     }
 
 

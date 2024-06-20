@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class UserResponseDTO {
     private Long id;
     private String userId;
+//    private String password;
     private String nickname;
     private String email;
     private LocalDateTime createDate;
@@ -17,6 +18,7 @@ public class UserResponseDTO {
     public UserResponseDTO(User user) {
         this.id = user.getId();
         this.userId = user.getUserId();
+//        this.password = user.getUserPassword();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.createDate = user.getCreateDate();
