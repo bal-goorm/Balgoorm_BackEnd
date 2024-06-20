@@ -1,4 +1,4 @@
-# !/bin/sh
+#!/bin/sh
 # Docker 데몬을 백그라운드에서 실행
 dockerd &
 
