@@ -23,7 +23,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         // 사용자 추가
-        String username = chatService.getCurrentUser().getNickname(); // 실제 사용자명 로직 필요
+        String username = chatService.getCurrentUser().getNickname(); //
         activeUsers.add(username);
         updateActiveUsers();
     }
@@ -31,7 +31,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         // 사용자 제거
-        String username = chatService.getCurrentUser().getNickname(); // 실제 사용자명 로직 필요
+        String username = chatService.getCurrentUser().getNickname();
         activeUsers.remove(username);
         updateActiveUsers();
     }
