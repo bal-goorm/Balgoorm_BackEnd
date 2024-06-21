@@ -2,25 +2,37 @@ package com.balgoorm.balgoorm_backend.user.config;
 
 import com.balgoorm.balgoorm_backend.user.auth.CustomAuthenticationSuccessHandler;
 import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetailsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.IOException;
 import java.util.Arrays;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -36,17 +48,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        // 정적 리소스와 회원가입 경로가 보안필터를 거치지 않게끔 설정
-//        return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**", "/font/**");
-//    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000/","*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -57,26 +64,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))                               // CORS 비활성화
-                .csrf(csrf -> csrf.disable())                           // CSRF 비활성화
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .cors(withDefaults())
+//                .cors().disable()                            // CORS 비활성화.and
+//                .csrf(csrf -> csrf.disable())                           // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers( "/css/**", "/js/**", "/img/**", "/font/**").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/member/**", "/board/**").hasRole("USER")
 //                        .requestMatchers("/login","/signup").anonymous()
-                                .anyRequest().permitAll() // 모든 요청 허용
+                                .requestMatchers("/api/login", "/api/signup", "/api/logout").permitAll()
+                                .anyRequest().authenticated() // 모든 요청 허용
                 )
                 .formLogin(login -> login
-                        .loginProcessingUrl("/api/login") // 로그인 폼이 제출될 URL 설정
-                        .successHandler(customAuthenticationSuccessHandler) // 로그인 성공 시 커스텀 핸들러
-                        .failureUrl("/login.html?error=true") // 실패했을 때 리턴하는 주소
-                        .usernameParameter("userId") // 해당 메소드에 적은 userId를 login form에 적힌 userId와 일치 시킴
-                        .passwordParameter("password") // 비밀번호 파라미터 설정
+                        .loginPage("/login")
+                        .loginProcessingUrl("/api/login")
+                        .successHandler(customAuthenticationSuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Invalid username or password.\"}");
+                        })
+                        .usernameParameter("userId")
+                        .passwordParameter("userPassword")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/api/logout") // 로그아웃 URL
-                        .logoutSuccessUrl("/login.html?logout")
+                        .logoutUrl("/api/logout")
+                        .logoutSuccessHandler(customLogoutSuccessHandler())
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
@@ -89,5 +105,24 @@ public class SecurityConfig {
                 .userDetailsService(customUserDetailsService);
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public LogoutSuccessHandler customLogoutSuccessHandler() {
+        return new CustomLogoutSuccessHandler();
+    }
+
+    @Component
+    public static class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
+
+        private final ObjectMapper objectMapper = new ObjectMapper();
+
+        @Override
+        public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(objectMapper.writeValueAsString("Spring: 로그아웃 성공"));
+            response.getWriter().flush();
+        }
     }
 }
