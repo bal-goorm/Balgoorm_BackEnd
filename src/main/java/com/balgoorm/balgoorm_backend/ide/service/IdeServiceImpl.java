@@ -56,41 +56,41 @@ public class IdeServiceImpl implements IdeService {
      * 어플리케이션 시작과 동시에 미리 사용할 dockerContainer 생성
      * @throws IOException
      */
-    @PostConstruct
-    public void createContainers() throws IOException {
-        String[] images = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
-        String[] dockerfiles = {"Dockerfile-java", "Dockerfile-cpp","Dockerfile-python"};
-        LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
-        String baseDirPath = "src/main/resources/dockerfile/";
-
-        // 이미지를 빌드하는 로직
-        for(int i = 0; i < dockerfiles.length; i++){
-            String dockerfilePath = baseDirPath + dockerfiles[i];
-            String imageName = images[i];
-
-            String imageId = dockerClient.buildImageCmd(new File(dockerfilePath))
-                    .withTags(new HashSet<>(java.util.Collections.singletonList(imageName + ":latest")))
-                    .exec(new BuildImageResultCallback())
-                    .awaitImageId();
-
-            System.out.println(imageName + ":latest 이미지가 성공적으로 빌드되었습니다: " + imageId);
-
-        }
-
-        // 컨테이너를 생성하는 로직
-        for (int i = 0; i < images.length; i++) {
-            String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
-            Files.createDirectories(Paths.get(projectDir));
-
-            CreateContainerResponse container = dockerClient.createContainerCmd(images[i])
-                    .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
-                    .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
-                    .withWorkingDir("/src")
-                    .exec();
-            log.info(getFileExtension(languages[i]) + " , " + container.getId());
-            containers.put(getFileExtension(languages[i]), container.getId());
-        }
-    }
+//    @PostConstruct
+//    public void createContainers() throws IOException {
+//        String[] images = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
+//        String[] dockerfiles = {"Dockerfile-java", "Dockerfile-cpp","Dockerfile-python"};
+//        LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
+//        String baseDirPath = "src/main/resources/dockerfile/";
+//
+//        // 이미지를 빌드하는 로직
+//        for(int i = 0; i < dockerfiles.length; i++){
+//            String dockerfilePath = baseDirPath + dockerfiles[i];
+//            String imageName = images[i];
+//
+//            String imageId = dockerClient.buildImageCmd(new File(dockerfilePath))
+//                    .withTags(new HashSet<>(java.util.Collections.singletonList(imageName + ":latest")))
+//                    .exec(new BuildImageResultCallback())
+//                    .awaitImageId();
+//
+//            System.out.println(imageName + ":latest 이미지가 성공적으로 빌드되었습니다: " + imageId);
+//
+//        }
+//
+//        // 컨테이너를 생성하는 로직
+//        for (int i = 0; i < images.length; i++) {
+//            String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
+//            Files.createDirectories(Paths.get(projectDir));
+//
+//            CreateContainerResponse container = dockerClient.createContainerCmd(images[i])
+//                    .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
+//                    .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
+//                    .withWorkingDir("/src")
+//                    .exec();
+//            log.info(getFileExtension(languages[i]) + " , " + container.getId());
+//            containers.put(getFileExtension(languages[i]), container.getId());
+//        }
+//    }
 
     /**
      * 어플리케이션이 종료될 때 사용중이였던 컨테이너를 모두 종료시킴

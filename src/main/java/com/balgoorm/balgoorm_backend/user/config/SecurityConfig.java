@@ -36,11 +36,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        // 정적 리소스와 회원가입 경로가 보안필터를 거치지 않게끔 설정
-        return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**", "/font/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        // 정적 리소스와 회원가입 경로가 보안필터를 거치지 않게끔 설정
+//        return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**", "/font/**");
+//    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -75,8 +75,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/api//logout")) // 로그아웃을 GET 방식으로 처리
-                        .logoutUrl("/logout")
+                        .logoutUrl("/api/logout") // 로그아웃 URL
                         .logoutSuccessUrl("/login.html?logout")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)

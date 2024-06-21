@@ -15,12 +15,18 @@ spec:
       containers:
         - name: backend
           # 여러분의 backend image 주소를 입력해주세요.
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_86c8e62d4427
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_e0fea4a21237
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - name: docker-socket
+            mountPath: /var/run/docker.sock
+          
           env:
             - name: TZ
               value: Asia/Seoul
             - name: DATABASE_URL
-              value: jdbc:mariadb://mariadb:3306/balgoorm
+              value: jdbc:mariadb://mariadb/balgoorm
           resources:
             requests:
               memory: 1Gi
@@ -28,6 +34,15 @@ spec:
             httpGet:
               path: /api/test
               port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
