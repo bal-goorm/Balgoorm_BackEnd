@@ -33,14 +33,11 @@ public class QuizController {
      */
     @GetMapping("/list/{page}")
     public ResponseEntity getQuizList(@RequestParam(defaultValue = "DEFAULT") QuizSortType sortType ,@PathVariable int page
-            , @RequestParam(defaultValue = "") List<Integer> levels, Authentication authentication){
+            , @RequestParam(defaultValue = "") List<Integer> levels, @RequestParam Long userId){
 
         /**
          * SpringDataJPA 에서 사용한 페이징 시스템의 시작 페이지는 0 부터 들어오는 변수는 1부터 들어오기 떄문에 -1 해서 서비스 메소드로 전달
          */
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getUserId();
 
         List<ResponseQuizList> quizList = quizService.getQuizList(sortType, levels, userId,  page-1);
 
@@ -48,10 +45,8 @@ public class QuizController {
     }
 
     @GetMapping("/detail/{quizId}")
-    public ResponseEntity getQuizDetail(@PathVariable Long quizId, Authentication authentication){
+    public ResponseEntity getQuizDetail(@PathVariable Long quizId, @RequestParam Long userId){
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getUserId();
 
         ResponseQuizDetail quizDetail = quizService.getQuizDetail(quizId, userId);
 
@@ -59,15 +54,8 @@ public class QuizController {
     }
 
 
-
-
     @PostMapping("/save")
-    public ResponseEntity saveQuiz(@RequestBody RequestSaveQuiz requestSaveQuiz, Authentication authentication){
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getUserId();
-
-        requestSaveQuiz.setUserId(userId);
+    public ResponseEntity saveQuiz(@RequestBody RequestSaveQuiz requestSaveQuiz){
 
         quizService.saveQuiz(requestSaveQuiz);
 
