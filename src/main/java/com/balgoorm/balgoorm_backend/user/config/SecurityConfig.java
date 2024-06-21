@@ -74,8 +74,8 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/member/**", "/board/**").hasRole("USER")
 //                        .requestMatchers("/login","/signup").anonymous()
-                                .requestMatchers("/api/login", "/api/signup", "/api/logout").permitAll()
-                                .anyRequest().authenticated() // 모든 요청 허용
+//                                .requestMatchers("/api/login", "/api/signup", "/api/logout").permitAll()
+                                .anyRequest().permitAll() // 모든 요청 허용
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
