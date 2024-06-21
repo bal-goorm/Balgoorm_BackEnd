@@ -16,7 +16,7 @@ public class DockerConfig {
         DefaultDockerClientConfig config =
                 DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .withDockerTlsVerify(false)
-                        .withRegistryUrl("https://krmp-d2hub.9rum.cc/")
+                        .withRegistryUrl("krmp-d2hub.9rum.cc/")
                         .withDockerHost("unix:///var/run/docker.sock")
                         .build();
 
