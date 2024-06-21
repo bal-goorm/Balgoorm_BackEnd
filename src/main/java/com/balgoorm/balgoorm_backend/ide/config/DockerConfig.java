@@ -16,8 +16,10 @@ public class DockerConfig {
         DefaultDockerClientConfig config =
                 DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .withDockerTlsVerify(false)
-                        .withRegistryUrl("krmp-d2hub.9rum.cc/")
+                        .withRegistryUrl("krmp-d2hub.9rum.cc")
                         .withDockerHost("unix:///var/run/docker.sock")
+                        .withHttpProxy("http://10.19.19.26:3128")
+                        .withHttpsProxy("http://10.19.19.26:3128")
                         .build();
 
         DockerHttpClient dockerHttpClient = new ApacheDockerHttpClient.Builder()
