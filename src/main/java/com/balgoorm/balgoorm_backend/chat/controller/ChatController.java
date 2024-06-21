@@ -2,6 +2,7 @@ package com.balgoorm.balgoorm_backend.chat.controller;
 
 import com.balgoorm.balgoorm_backend.chat.model.entity.Chat;
 import com.balgoorm.balgoorm_backend.chat.model.request.ChatRequest;
+import com.balgoorm.balgoorm_backend.chat.model.response.ChatResponse;
 import com.balgoorm.balgoorm_backend.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +23,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class ChatController {
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatService chatService;
+//    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/join")
     @SendTo("/sub/chat")
     public String joinChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
-        return chatRequest.getSenderName() + "님이 입장하셨습니다.";
+        return  chatService.getCurrentUser().getNickname() + "님이 입장하셨습니다.";
     }
 
     @MessageMapping("/chat")
@@ -41,8 +42,8 @@ public class ChatController {
     }
 
     @GetMapping("history")
-    public ResponseEntity<List<Chat>> getHistory() {
-        List<Chat> chatHistory = chatService.getHistory();
+    public ResponseEntity<List<ChatResponse>> getHistory() {
+        List<ChatResponse> chatHistory = chatService.getHistory();
         return new ResponseEntity<>(chatHistory, HttpStatus.OK);
     }
 
