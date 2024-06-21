@@ -58,9 +58,10 @@ public class IdeServiceImpl implements IdeService {
         // 이미지 풀
         String[] repos = {"openjdk", "python", "gcc"};
         String[] tage = {"11-jdk-slim", "3.8-slim", "latest"};
+        String registry = "krmp-d2hub.9rum.cc/";
 
         for(int i = 0; i < repos.length; i++){
-            dockerClient.pullImageCmd("krmp-d2hub.9rum.cc/"+repos[i])
+            dockerClient.pullImageCmd(repos[i])
                     .withTag(tage[i])
                     .exec(new PullImageResultCallback())
                     .awaitCompletion();
