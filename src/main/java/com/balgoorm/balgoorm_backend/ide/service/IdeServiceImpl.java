@@ -12,10 +12,7 @@ import com.balgoorm.balgoorm_backend.quiz.repository.SubmitRecordRepository;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.repository.UserRepository;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.BuildImageResultCallback;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.ExecCreateCmdResponse;
-import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
@@ -57,7 +54,19 @@ public class IdeServiceImpl implements IdeService {
      * @throws IOException
      */
     @PostConstruct
-    public void createContainers() throws IOException {
+    public void createContainers() throws IOException, InterruptedException {
+        // 이미지 풀
+        String[] repos = {"openjdk", "python", "gcc"};
+        String[] tage = {"11-jdk-slim", "3.8-slim", "latest"};
+
+        for(int i = 0; i < repos.length; i++){
+            dockerClient.pullImageCmd(repos[i])
+                    .withTag(tage[i])
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+        }
+
+        // 이미지 빌드
         String[] images = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
         String[] dockerfiles = {"Dockerfile-java", "Dockerfile-cpp","Dockerfile-python"};
         LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
