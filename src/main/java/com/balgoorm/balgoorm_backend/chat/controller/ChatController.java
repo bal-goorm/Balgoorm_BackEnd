@@ -21,8 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatService chatService;
+//    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/join")
     @SendTo("/sub/chat")
