@@ -12,6 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +43,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000/","*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors(cors -> cors.disable())                               // CORS 비활성화
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))                               // CORS 비활성화
                 .csrf(csrf -> csrf.disable())                           // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers( "/css/**", "/js/**", "/img/**", "/font/**").permitAll()
@@ -50,7 +67,6 @@ public class SecurityConfig {
                                 .anyRequest().permitAll() // 모든 요청 허용
                 )
                 .formLogin(login -> login
-                        .loginPage("/login.html") // 로그인 폼
                         .loginProcessingUrl("/api/login") // 로그인 폼이 제출될 URL 설정
                         .successHandler(customAuthenticationSuccessHandler) // 로그인 성공 시 커스텀 핸들러
                         .failureUrl("/login.html?error=true") // 실패했을 때 리턴하는 주소
