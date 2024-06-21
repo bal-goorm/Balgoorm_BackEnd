@@ -60,7 +60,7 @@ public class IdeServiceImpl implements IdeService {
         String[] tage = {"11-jdk-slim", "3.8-slim", "latest"};
 
         for(int i = 0; i < repos.length; i++){
-            dockerClient.pullImageCmd(repos[i])
+            dockerClient.pullImageCmd("krmp-d2hub.9rum.cc/"+repos[i])
                     .withTag(tage[i])
                     .exec(new PullImageResultCallback())
                     .awaitCompletion();
