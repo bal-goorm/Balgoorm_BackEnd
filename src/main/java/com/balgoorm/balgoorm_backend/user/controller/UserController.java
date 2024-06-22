@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -82,8 +83,10 @@ public class UserController {
 
     // 로그인한 유저의 정보를 조회하는 API
     @GetMapping("/myinfo")
-    public ResponseEntity<MyInfoResponseDTO> myinfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        MyInfoResponseDTO myInfoResponseDTO = userService.getUserInfo(customUserDetails.getUserId());
+    public ResponseEntity<MyInfoResponseDTO> myinfo(Authentication authentication) {
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        MyInfoResponseDTO myInfoResponseDTO = userService.getUserInfo(userDetails.getUserId());
         return ResponseEntity.ok(myInfoResponseDTO);
     }
 
