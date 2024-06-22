@@ -68,6 +68,8 @@ public class IdeServiceImpl implements IdeService {
                     .awaitCompletion();
         }
 
+        //String[] repos = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
+
         LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
 
 
@@ -196,7 +198,7 @@ public class IdeServiceImpl implements IdeService {
             if (!compileStderr.trim().isEmpty()) {
                 log.info(compileStderr);
                 codeRunResponse.setErrorMessage(compileStderr);
-                cleanup(tempDirHost, containerId, tempDirContainer);
+                //cleanup(tempDirHost, containerId, tempDirContainer);
                 return codeRunResponse;
             }
         }
@@ -237,7 +239,7 @@ public class IdeServiceImpl implements IdeService {
                 sb.append(lines[i]).append("\n");
             }
             codeRunResponse.setErrorMessage(sb.toString());
-            cleanup(tempDirHost, containerId, tempDirContainer);
+            //cleanup(tempDirHost, containerId, tempDirContainer);
             return codeRunResponse;
         }
 
@@ -280,7 +282,7 @@ public class IdeServiceImpl implements IdeService {
             }
         }
 
-        cleanup(tempDirHost, containerId, tempDirContainer);
+        //cleanup(tempDirHost, containerId, tempDirContainer);
 
         return codeRunResponse;
     }
