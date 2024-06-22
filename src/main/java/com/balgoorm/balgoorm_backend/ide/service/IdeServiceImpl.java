@@ -146,7 +146,14 @@ public class IdeServiceImpl implements IdeService {
                 throw new IllegalArgumentException("Unsupported language: " + executeRequest.getLanguage());
         }
 
-        String filePath = tempDirHost + "/main." + fileExtension;
+        String filePath = "";
+
+        if(executeRequest.getLanguage() == LanguageType.JAVA){
+            filePath = tempDirHost + "/Main." + fileExtension;
+        }else{
+            filePath = tempDirHost + "/main." + fileExtension;
+        }
+
         Files.write(Paths.get(filePath), executeRequest.getCode().getBytes());
 
         String containerId = containers.get(fileExtension);
