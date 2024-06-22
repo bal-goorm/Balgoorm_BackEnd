@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface QuizService {
 
-    public List<ResponseQuizList> getQuizList(QuizSortType sortType, List<Integer> levels, int page);
+    public List<ResponseQuizList> getQuizList(QuizSortType sortType, List<Integer> levels, Long userId,  int page);
 
     ResponseQuizDetail getQuizDetail(Long quizId, Long userId);
 

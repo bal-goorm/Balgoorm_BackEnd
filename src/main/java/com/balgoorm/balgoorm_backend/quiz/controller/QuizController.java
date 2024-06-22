@@ -5,10 +5,12 @@ import com.balgoorm.balgoorm_backend.quiz.model.dto.response.ResponseQuizDetail;
 import com.balgoorm.balgoorm_backend.quiz.model.dto.response.ResponseQuizList;
 import com.balgoorm.balgoorm_backend.quiz.model.enums.QuizSortType;
 import com.balgoorm.balgoorm_backend.quiz.service.QuizService;
+import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,26 +32,26 @@ public class QuizController {
      * @return
      */
     @GetMapping("/list/{page}")
-    public ResponseEntity getQuizList(@RequestParam(defaultValue = "DEFAULT") QuizSortType sortType ,@PathVariable int page, @RequestParam(defaultValue = "") List<Integer> levels){
+    public ResponseEntity getQuizList(@RequestParam(defaultValue = "DEFAULT") QuizSortType sortType ,@PathVariable int page
+            , @RequestParam(defaultValue = "") List<Integer> levels, @RequestParam Long userId){
 
         /**
          * SpringDataJPA 에서 사용한 페이징 시스템의 시작 페이지는 0 부터 들어오는 변수는 1부터 들어오기 떄문에 -1 해서 서비스 메소드로 전달
          */
 
-        List<ResponseQuizList> quizList = quizService.getQuizList(sortType, levels, page-1);
+        List<ResponseQuizList> quizList = quizService.getQuizList(sortType, levels, userId,  page-1);
 
         return ResponseEntity.ok(quizList);
     }
 
     @GetMapping("/detail/{quizId}")
-    public ResponseEntity getQuizDetail(@PathVariable Long quizId, @RequestParam(defaultValue = "0") Long userId){
+    public ResponseEntity getQuizDetail(@PathVariable Long quizId, @RequestParam Long userId){
+
 
         ResponseQuizDetail quizDetail = quizService.getQuizDetail(quizId, userId);
 
         return ResponseEntity.ok(quizDetail);
     }
-
-
 
 
     @PostMapping("/save")

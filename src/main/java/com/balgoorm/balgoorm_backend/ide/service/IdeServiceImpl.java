@@ -56,42 +56,29 @@ public class IdeServiceImpl implements IdeService {
     @PostConstruct
     public void createContainers() throws IOException, InterruptedException {
         // 이미지 풀
-        String[] repos = {"openjdk", "python", "gcc"};
-        String[] tage = {"11-jdk-slim", "3.8-slim", "latest"};
+        String[] repos = {
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_aec62bbc5315",
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_abeb7ba1fbdf",
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_ae10f8d28ad9"
+        };
 
         for(int i = 0; i < repos.length; i++){
-            dockerClient.pullImageCmd("krmp-d2hub.9rum.cc/"+repos[i])
-                    .withTag(tage[i])
+            dockerClient.pullImageCmd(repos[i])
                     .exec(new PullImageResultCallback())
                     .awaitCompletion();
         }
 
-        // 이미지 빌드
-        String[] images = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
-        String[] dockerfiles = {"Dockerfile-java", "Dockerfile-cpp","Dockerfile-python"};
+        //String[] repos = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
+
         LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
-        String baseDirPath = "src/main/resources/dockerfile/";
 
-        // 이미지를 빌드하는 로직
-        for(int i = 0; i < dockerfiles.length; i++){
-            String dockerfilePath = baseDirPath + dockerfiles[i];
-            String imageName = images[i];
-
-            String imageId = dockerClient.buildImageCmd(new File(dockerfilePath))
-                    .withTags(new HashSet<>(java.util.Collections.singletonList(imageName + ":latest")))
-                    .exec(new BuildImageResultCallback())
-                    .awaitImageId();
-
-            System.out.println(imageName + ":latest 이미지가 성공적으로 빌드되었습니다: " + imageId);
-
-        }
 
         // 컨테이너를 생성하는 로직
-        for (int i = 0; i < images.length; i++) {
+        for (int i = 0; i < repos.length; i++) {
             String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
             Files.createDirectories(Paths.get(projectDir));
 
-            CreateContainerResponse container = dockerClient.createContainerCmd(images[i])
+            CreateContainerResponse container = dockerClient.createContainerCmd(repos[i])
                     .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
                     .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
                     .withWorkingDir("/src")
@@ -159,7 +146,14 @@ public class IdeServiceImpl implements IdeService {
                 throw new IllegalArgumentException("Unsupported language: " + executeRequest.getLanguage());
         }
 
-        String filePath = tempDirHost + "/main." + fileExtension;
+        String filePath = "";
+
+        if(executeRequest.getLanguage() == LanguageType.JAVA){
+            filePath = tempDirHost + "/Main." + fileExtension;
+        }else{
+            filePath = tempDirHost + "/main." + fileExtension;
+        }
+
         Files.write(Paths.get(filePath), executeRequest.getCode().getBytes());
 
         String containerId = containers.get(fileExtension);
@@ -211,7 +205,7 @@ public class IdeServiceImpl implements IdeService {
             if (!compileStderr.trim().isEmpty()) {
                 log.info(compileStderr);
                 codeRunResponse.setErrorMessage(compileStderr);
-                cleanup(tempDirHost, containerId, tempDirContainer);
+                //cleanup(tempDirHost, containerId, tempDirContainer);
                 return codeRunResponse;
             }
         }
@@ -252,7 +246,7 @@ public class IdeServiceImpl implements IdeService {
                 sb.append(lines[i]).append("\n");
             }
             codeRunResponse.setErrorMessage(sb.toString());
-            cleanup(tempDirHost, containerId, tempDirContainer);
+            //cleanup(tempDirHost, containerId, tempDirContainer);
             return codeRunResponse;
         }
 
@@ -295,7 +289,7 @@ public class IdeServiceImpl implements IdeService {
             }
         }
 
-        cleanup(tempDirHost, containerId, tempDirContainer);
+        //cleanup(tempDirHost, containerId, tempDirContainer);
 
         return codeRunResponse;
     }
