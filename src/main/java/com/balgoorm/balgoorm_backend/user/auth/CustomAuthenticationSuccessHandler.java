@@ -26,14 +26,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
+
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long id = userDetails.getUser().getId(); // 식별자
         UserRole role = userDetails.getUser().getRole(); // 유저 ROLE
 
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> result = new HashMap<>();
-        result.put("message", "로그인 성공");
-        result.put("userId", authentication.getName());
+        result.put("role", role+"");
+        result.put("userId", id+"");
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

@@ -78,7 +78,7 @@ public class BoardService {
 
 
     @Transactional
-    public Long saveBoard(BoardWriteRequestDTO boardWriteRequestDTO, BoardImageUploadDTO boardImageUploadDTO, String userId) {
+    public Long saveBoard(BoardWriteRequestDTO boardWriteRequestDTO , String userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저 ID가 존재하지 않습니다."));
 
@@ -91,9 +91,9 @@ public class BoardService {
 
         boardRepository.save(board);
 
-        if (boardImageUploadDTO.getFiles() != null && !boardImageUploadDTO.getFiles().isEmpty()) {
-            saveBoardImages(boardImageUploadDTO.getFiles(), board);
-        }
+//        if (boardImageUploadDTO.getFiles() != null && !boardImageUploadDTO.getFiles().isEmpty()) {
+//            saveBoardImages(boardImageUploadDTO.getFiles(), board);
+//        }
 
         return board.getBoardId();
     }
