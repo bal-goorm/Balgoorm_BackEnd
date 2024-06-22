@@ -43,10 +43,9 @@ public class BoardController {
 
     @PostMapping
     public BoardResponseDTO createBoard(BoardWriteRequestDTO boardWriteRequestDTO,
-                                        @ModelAttribute BoardImageUploadDTO boardImageUploadDTO,
                                         Authentication authentication) throws IOException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Long boardId = boardService.saveBoard(boardWriteRequestDTO, boardImageUploadDTO, userDetails.getUsername());
+        Long boardId = boardService.saveBoard(boardWriteRequestDTO, userDetails.getUsername());
         return boardService.searchBoard(boardId);
     }
 
@@ -85,4 +84,3 @@ public class BoardController {
         return "Unliked the board";
     }
 }
-

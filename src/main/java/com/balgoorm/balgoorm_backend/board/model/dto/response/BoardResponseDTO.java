@@ -15,7 +15,7 @@ public class BoardResponseDTO {
     private String boardTitle;
     private String boardContent;
     private LocalDateTime boardCreateDate;
-    private List<String> imageUrls;
+//    private List<String> imageUrls;
     private List<CommentResponseDTO> comments; // 댓글 리스트 추가
     private int likesCount;
     private int views;
@@ -28,9 +28,9 @@ public class BoardResponseDTO {
         this.boardTitle = board.getBoardTitle();
         this.boardContent = board.getBoardContent();
         this.boardCreateDate = board.getBoardCreateDate();
-        this.imageUrls = board.getBoardImages().stream()
-                .map(BoardImage::getUrl)
-                .collect(Collectors.toList());
+//        this.imageUrls = board.getBoardImages().stream()
+//                .map(BoardImage::getUrl)
+//                .collect(Collectors.toList());
         this.comments = board.getComments().stream()
                 .map(CommentResponseDTO::new)
                 .collect(Collectors.toList());
