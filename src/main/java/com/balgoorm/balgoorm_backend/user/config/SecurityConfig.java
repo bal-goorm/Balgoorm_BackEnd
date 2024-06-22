@@ -66,9 +66,6 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .cors(withDefaults())
-//                .cors().disable()                            // CORS 비활성화.and
-//                .csrf(csrf -> csrf.disable())                           // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers( "/css/**", "/js/**", "/img/**", "/font/**").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
