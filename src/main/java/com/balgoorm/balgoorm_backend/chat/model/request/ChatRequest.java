@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRequest {
+    private String senderName;
     private String chatBody; // 메시지
 }

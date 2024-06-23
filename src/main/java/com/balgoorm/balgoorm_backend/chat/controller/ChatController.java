@@ -14,11 +14,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class ChatController {
@@ -30,7 +31,7 @@ public class ChatController {
     @SendTo("/sub/chat")
     public String joinChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
-        return  chatService.getCurrentUser().getNickname() + "님이 입장하셨습니다.";
+        return  "님이 입장하셨습니다.";
     }
 
     @MessageMapping("/chat")
@@ -41,7 +42,7 @@ public class ChatController {
         return savedChat.getSenderName() + ": " + savedChat.getChatBody();
     }
 
-    @GetMapping("history")
+    @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getHistory() {
         List<ChatResponse> chatHistory = chatService.getHistory();
         return new ResponseEntity<>(chatHistory, HttpStatus.OK);

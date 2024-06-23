@@ -26,7 +26,7 @@ public class ChatService {
 
     public Chat enterChat(ChatRequest chatRequest) {
         Chat chat = new Chat();
-        chat.setSenderName(getCurrentUser().getNickname());
+        chat.setSenderName(chatRequest.getSenderName());
         chat.setChatBody(chatRequest.getChatBody());
         chat.setChatTime(LocalDateTime.now());
 
@@ -37,7 +37,7 @@ public class ChatService {
     }
 
     public List<ChatResponse> getHistory() {
-        PageRequest pageRequest = PageRequest.of(0, 100);
+        PageRequest pageRequest = PageRequest.of(0, 10);
         return chatRepository.findLatelyChat(pageRequest)
                 .stream()
                 .map(ChatResponse::changeResponse)
