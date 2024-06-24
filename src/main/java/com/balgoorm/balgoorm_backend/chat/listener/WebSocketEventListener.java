@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -21,7 +23,7 @@ public class WebSocketEventListener {
     private final ChatService chatService;
 
     //Todo:: Set 중복 허용 안됨 테스트문제 발생 시 확인 필요
-    private Set<String> activeUsers = new HashSet<>();
+    public static Set<String> activeUsers = new HashSet<>();
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -44,8 +46,15 @@ public class WebSocketEventListener {
         updateActiveUsers();
     }
 
+//    @SubscribeMapping("/sub/active-users")
+//    public void handleSubscription(SimpMessageHeaderAccessor accessor) {
+//        String sessionId = accessor.getSessionId();
+//        log.info("구독 성공: {}", sessionId);
+//        updateActiveUsers();
+//    }
+
     // "/sub/active-users" 구독시 소켓 연결, 해체시 현재 채팅방 참여 인원을 String 형태로 발송
-    private void updateActiveUsers() {
-        simpMessagingTemplate.convertAndSend("/sub/active-users", activeUsers.size());
+    public void updateActiveUsers() {
+        simpMessagingTemplate.convertAndSend("api/sub/active-users", activeUsers.size());
     }
 }
