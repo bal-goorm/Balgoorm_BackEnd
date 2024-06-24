@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class ChatController {
 
     private final ChatService chatService;
@@ -39,6 +38,7 @@ public class ChatController {
     public String enterChat(ChatRequest chatRequest) {
         Chat savedChat = chatService.enterChat(chatRequest);
         log.info("Message: {}", chatRequest.getChatBody());
+        log.info("Message: {}", savedChat.getSenderName());
         return savedChat.getSenderName() + ": " + savedChat.getChatBody();
     }
 
