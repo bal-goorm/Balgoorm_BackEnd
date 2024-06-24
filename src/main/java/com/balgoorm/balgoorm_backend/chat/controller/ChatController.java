@@ -33,14 +33,31 @@ public class ChatController {
         return chatRequest.getSenderName() + chatRequest.getChatBody();
     }
 
+//    @MessageMapping("/join")
+//    @SendTo("/sub/join")
+    public String joinChatRoom2(ChatRequest chatRequest) {
+        log.info("Message: {}", chatRequest.getChatBody());
+        return chatRequest.getSenderName() + chatRequest.getChatBody();
+    }
+
     @MessageMapping("/chat")
     @SendTo("/sub/chat")
     public String enterChat(ChatRequest chatRequest) {
         Chat savedChat = chatService.enterChat(chatRequest);
         log.info("Message: {}", chatRequest.getChatBody());
         log.info("Message: {}", savedChat.getSenderName());
-        return savedChat.getSenderName() + ": " + savedChat.getChatBody();
+        return savedChat.getSenderName() + ":" + savedChat.getChatBody()
+                + ":" + savedChat.getChatTime();
     }
+
+//    @MessageMapping("/chat")
+//    @SendTo("/sub/chat")
+//    public ResponseEntity<ChatResponse> enterChat2(ChatRequest chatRequest) {
+//        ChatResponse savedChat = chatService.enterChat2(chatRequest);
+//        log.info("Message: {}", chatRequest.getChatBody());
+//        log.info("Message: {}", savedChat.getSenderName());
+//        return new ResponseEntity<>(savedChat, HttpStatus.OK);
+//    }
 
     @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getHistory() {
