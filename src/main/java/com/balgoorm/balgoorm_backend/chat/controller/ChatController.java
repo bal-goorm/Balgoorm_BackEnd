@@ -33,12 +33,13 @@ public class ChatController {
         return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 입장하셨습니다.";
     }
 
-//    @MessageMapping("/join")
-//    @SendTo("/sub/join")
-    public String joinChatRoom2(ChatRequest chatRequest) {
+    @MessageMapping("/disconnect")
+    @SendTo("/sub/join")
+    public String disConnectChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
-        return chatRequest.getSenderName() + chatRequest.getChatBody();
+        return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 퇴장하셨습니다.";
     }
+
 
     @MessageMapping("/chat")
     @SendTo("/sub/chat")
@@ -49,15 +50,6 @@ public class ChatController {
         return savedChat.getSenderName() + ":" + savedChat.getChatBody()
                 + ":" + savedChat.getChatTime();
     }
-
-//    @MessageMapping("/chat")
-//    @SendTo("/sub/chat")
-//    public ResponseEntity<ChatResponse> enterChat2(ChatRequest chatRequest) {
-//        ChatResponse savedChat = chatService.enterChat2(chatRequest);
-//        log.info("Message: {}", chatRequest.getChatBody());
-//        log.info("Message: {}", savedChat.getSenderName());
-//        return new ResponseEntity<>(savedChat, HttpStatus.OK);
-//    }
 
     @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getHistory() {
