@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/myinfo/**").hasAnyRole("ADMIN","USER")
                         .requestMatchers("/api/login", "/api/signup", "/api/logout", "/api/test/**").permitAll()
-                        .anyRequest().authenticated() // 모든 요청 허용
+                        .anyRequest().hasAnyRole("ADMIN", "USER")
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
