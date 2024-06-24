@@ -37,7 +37,7 @@ public class ChatController {
     }
 
     @MessageMapping("/disconnect")
-    @SendTo("/api/sub/join")
+    @SendTo("/api/sub/disconnect")
     public String disConnectChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
         return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 퇴장하셨습니다.";
