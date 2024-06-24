@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoField;
 
 @Entity
 @Data
@@ -15,6 +16,15 @@ public class Chat {
     private String senderName;
     private String chatBody;
     private LocalTime chatTime;
+
+    //test
+    @PrePersist
+    @PreUpdate
+    public void validateTime() {
+        if (chatTime != null && chatTime.getNano() < 0) {
+            chatTime = chatTime.with(ChronoField.NANO_OF_SECOND, 0);
+        }
+    }
 
 //    @ManyToOne
 //    @JoinColumn(name = "CHATROOM_ID", nullable = false)

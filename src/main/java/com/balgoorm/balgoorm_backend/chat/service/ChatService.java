@@ -52,8 +52,17 @@ public class ChatService {
         PageRequest pageRequest = PageRequest.of(0, 10);
         return chatRepository.findLatelyChat(pageRequest)
                 .stream()
-                .map(ChatResponse::changeResponse)
+                .map(chatMessage -> {
+                    LocalTime chatTime = chatMessage.getChatTime();
+                    if (chatTime != null && chatTime.getNano() < 0) {
+                        chatTime = chatTime.withNano(0);
+                    }
+                    ChatResponse chatResponse = ChatResponse.changeResponse(chatMessage);
+                    chatResponse.setChatTime(chatTime);
+                    return chatResponse;
+                })
                 .collect(Collectors.toList());
+
     }
 
     public User getCurrentUser() {
