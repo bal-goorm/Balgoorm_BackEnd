@@ -2,7 +2,9 @@ package com.balgoorm.balgoorm_backend.chat.listener;
 
 import com.balgoorm.balgoorm_backend.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocketEventListener {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatService chatService;
@@ -22,17 +25,22 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+
+        SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
+        String sessionId = accessor.getSessionId();
         // 사용자 추가
-        String username = chatService.getCurrentUser().getNickname(); // 실제 사용자명 로직 필요
-        activeUsers.add(username);
+        log.info("웹소켓 연결 성공: {}", sessionId);
+        activeUsers.add(sessionId);
         updateActiveUsers();
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         // 사용자 제거
-        String username = chatService.getCurrentUser().getNickname(); // 실제 사용자명 로직 필요
-        activeUsers.remove(username);
+        SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
+        String sessionId = accessor.getSessionId();
+        log.info("웹소켓 연결 해체: {}", sessionId);
+        activeUsers.remove(sessionId);
         updateActiveUsers();
     }
 

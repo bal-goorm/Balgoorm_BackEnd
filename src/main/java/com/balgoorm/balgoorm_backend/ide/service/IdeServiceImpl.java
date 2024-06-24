@@ -49,6 +49,7 @@ public class IdeServiceImpl implements IdeService {
      */
     static Map<String, String> containers = new HashMap<>();
 
+
     /**
      * 어플리케이션 시작과 동시에 미리 사용할 dockerContainer 생성
      * @throws IOException
@@ -87,6 +88,7 @@ public class IdeServiceImpl implements IdeService {
             containers.put(getFileExtension(languages[i]), container.getId());
         }
     }
+
 
     /**
      * 어플리케이션이 종료될 때 사용중이였던 컨테이너를 모두 종료시킴
