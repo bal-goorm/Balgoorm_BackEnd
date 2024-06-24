@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Builder
 public class ChatResponse {
     private String senderName;
     private String chatBody;
-    private LocalDateTime chatTime;
+    private LocalTime chatTime;
 
     public static ChatResponse changeResponse (Chat chat) {
         return new ChatResponse(
