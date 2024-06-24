@@ -15,8 +15,6 @@ public class CustomController {
     @GetMapping("/test")
     public ResponseEntity test(){
 
-        log.info("test ok");
-
         return ResponseEntity.ok("ok");
     }
 }
