@@ -30,7 +30,7 @@ public class ChatController {
     @SendTo("/sub/join")
     public String joinChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
-        return chatRequest.getSenderName() + chatRequest.getChatBody();
+        return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 입장하셨습니다.";
     }
 
 //    @MessageMapping("/join")

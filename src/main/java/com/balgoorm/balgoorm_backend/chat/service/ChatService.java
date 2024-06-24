@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class ChatService {
         Chat chat = new Chat();
         chat.setSenderName(chatRequest.getSenderName());
         chat.setChatBody(chatRequest.getChatBody());
-        chat.setChatTime(LocalDateTime.now());
+        chat.setChatTime(LocalTime.now());
 
         Chat saved = chatRepository.save(chat);
         log.info("saved: {}", saved.getChatBody());
@@ -39,7 +40,7 @@ public class ChatService {
         Chat chat = new Chat();
         chat.setSenderName(chatRequest.getSenderName());
         chat.setChatBody(chatRequest.getChatBody());
-        chat.setChatTime(LocalDateTime.now());
+        chat.setChatTime(LocalTime.now());
 
         Chat saved = chatRepository.save(chat);
         log.info("saved: {}", saved.getChatBody());
