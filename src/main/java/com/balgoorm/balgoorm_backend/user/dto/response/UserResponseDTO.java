@@ -14,7 +14,7 @@ public class UserResponseDTO {
     private String email;
     private LocalDateTime createDate;
     private String role;
-    private String boards;
+//    private String boards;
 
     public UserResponseDTO(User user) {
         this.id = user.getId();
@@ -24,6 +24,6 @@ public class UserResponseDTO {
         this.email = user.getEmail();
         this.createDate = user.getCreateDate();
         this.role = user.getRole().toString();
-        this.boards = user.getBoards().toString();
+//        this.boards = user.getBoards().toString();
     }
 }

@@ -39,8 +39,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Board> boards = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//    private List<Board> boards = new ArrayList<>();
 
 
 //    @ManyToOne
@@ -57,7 +57,7 @@ public class User {
         this.email = email;
         this.createDate = createDate;
         this.role = role;
-        this.boards = boards != null ? boards : new ArrayList<>();
+//        this.boards = boards != null ? boards : new ArrayList<>();
 //        this.chatRoom = chatRoom;
     }
 }
