@@ -49,7 +49,7 @@ public class User {
 
     // All args constructor for Builder pattern
     @Builder
-    public User(Long id, String userId, String userPassword, String nickname, String email, LocalDateTime createDate, UserRole role, List<Board> boards) {
+    public User(Long id, String userId, String userPassword, String nickname, String email, LocalDateTime createDate, UserRole role) {
         this.id = id;
         this.userId = userId;
         this.userPassword = userPassword;
