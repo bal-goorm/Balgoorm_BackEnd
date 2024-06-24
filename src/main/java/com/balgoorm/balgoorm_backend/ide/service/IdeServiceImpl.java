@@ -12,10 +12,7 @@ import com.balgoorm.balgoorm_backend.quiz.repository.SubmitRecordRepository;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.repository.UserRepository;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.BuildImageResultCallback;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.ExecCreateCmdResponse;
-import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
@@ -52,45 +49,46 @@ public class IdeServiceImpl implements IdeService {
      */
     static Map<String, String> containers = new HashMap<>();
 
-//    /**
-//     * 어플리케이션 시작과 동시에 미리 사용할 dockerContainer 생성
-//     * @throws IOException
-//     */
-//    @PostConstruct
-//    public void createContainers() throws IOException {
-//        String[] images = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
-//        String[] dockerfiles = {"Dockerfile-java", "Dockerfile-cpp","Dockerfile-python"};
-//        LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
-//        String baseDirPath = "src/main/resources/dockerfile/";
-//
-//        // 이미지를 빌드하는 로직
-//        for(int i = 0; i < dockerfiles.length; i++){
-//            String dockerfilePath = baseDirPath + dockerfiles[i];
-//            String imageName = images[i];
-//
-//            String imageId = dockerClient.buildImageCmd(new File(dockerfilePath))
-//                    .withTags(new HashSet<>(java.util.Collections.singletonList(imageName + ":latest")))
-//                    .exec(new BuildImageResultCallback())
-//                    .awaitImageId();
-//
-//            System.out.println(imageName + ":latest 이미지가 성공적으로 빌드되었습니다: " + imageId);
-//
-//        }
-//
-//        // 컨테이너를 생성하는 로직
-//        for (int i = 0; i < images.length; i++) {
-//            String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
-//            Files.createDirectories(Paths.get(projectDir));
-//
-//            CreateContainerResponse container = dockerClient.createContainerCmd(images[i])
-//                    .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
-//                    .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
-//                    .withWorkingDir("/src")
-//                    .exec();
-//            log.info(getFileExtension(languages[i]) + " , " + container.getId());
-//            containers.put(getFileExtension(languages[i]), container.getId());
-//        }
-//    }
+
+    /**
+     * 어플리케이션 시작과 동시에 미리 사용할 dockerContainer 생성
+     * @throws IOException
+     */
+    @PostConstruct
+    public void createContainers() throws IOException, InterruptedException {
+        // 이미지 풀
+        String[] repos = {
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_aec62bbc5315",
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_abeb7ba1fbdf",
+                "krmp-d2hub-idock.9rum.cc/dev-test/repo_ae10f8d28ad9"
+        };
+
+        for(int i = 0; i < repos.length; i++){
+            dockerClient.pullImageCmd(repos[i])
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+        }
+
+        //String[] repos = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
+
+        LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
+
+
+        // 컨테이너를 생성하는 로직
+        for (int i = 0; i < repos.length; i++) {
+            String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
+            Files.createDirectories(Paths.get(projectDir));
+
+            CreateContainerResponse container = dockerClient.createContainerCmd(repos[i])
+                    .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
+                    .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
+                    .withWorkingDir("/src")
+                    .exec();
+            log.info(getFileExtension(languages[i]) + " , " + container.getId());
+            containers.put(getFileExtension(languages[i]), container.getId());
+        }
+    }
+
 
     /**
      * 어플리케이션이 종료될 때 사용중이였던 컨테이너를 모두 종료시킴
@@ -150,7 +148,14 @@ public class IdeServiceImpl implements IdeService {
                 throw new IllegalArgumentException("Unsupported language: " + executeRequest.getLanguage());
         }
 
-        String filePath = tempDirHost + "/main." + fileExtension;
+        String filePath = "";
+
+        if(executeRequest.getLanguage() == LanguageType.JAVA){
+            filePath = tempDirHost + "/Main." + fileExtension;
+        }else{
+            filePath = tempDirHost + "/main." + fileExtension;
+        }
+
         Files.write(Paths.get(filePath), executeRequest.getCode().getBytes());
 
         String containerId = containers.get(fileExtension);

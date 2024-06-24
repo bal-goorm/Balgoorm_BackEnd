@@ -21,5 +21,6 @@ public class ResponseQuizList {
     int quiz_level;
     int quiz_rec_cnt;
     int correct_rate;
+    boolean isSolved;
 
 }

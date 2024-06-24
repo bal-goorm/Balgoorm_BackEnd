@@ -9,5 +9,5 @@ import java.util.List;
 public class BoardEditRequest {
     private String boardTitle;
     private String boardContent;
-    private List<MultipartFile> files;
+//    private List<MultipartFile> files;
 }

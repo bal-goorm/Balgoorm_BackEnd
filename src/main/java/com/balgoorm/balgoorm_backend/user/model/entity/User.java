@@ -1,11 +1,14 @@
 package com.balgoorm.balgoorm_backend.user.model.entity;
 
+import com.balgoorm.balgoorm_backend.board.model.entity.Board;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -36,6 +39,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//    private List<Board> boards = new ArrayList<>();
+
+
 //    @ManyToOne
 //    @JoinColumn(name = "CHAT_ROOM_ID", nullable = false)
 //    private ChatRoom chatRoom;
@@ -50,6 +57,7 @@ public class User {
         this.email = email;
         this.createDate = createDate;
         this.role = role;
+//        this.boards = boards != null ? boards : new ArrayList<>();
 //        this.chatRoom = chatRoom;
     }
 }
