@@ -5,6 +5,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +17,7 @@ public class DockerConfig {
         DefaultDockerClientConfig config =
                 DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .withDockerTlsVerify(false)
-                        .withRegistryUrl("https://krmp-d2hub.9rum.cc/")
+                        .withRegistryUrl("krmp-d2hub.9rum.cc/")
                         .withDockerHost("unix:///var/run/docker.sock")
                         .build();
 

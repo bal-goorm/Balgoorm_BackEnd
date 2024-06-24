@@ -6,10 +6,7 @@ import com.balgoorm.balgoorm_backend.quiz.model.dto.response.ResponseQuizList;
 import com.balgoorm.balgoorm_backend.quiz.model.entity.Quiz;
 import com.balgoorm.balgoorm_backend.quiz.model.entity.UserRecQuiz;
 import com.balgoorm.balgoorm_backend.quiz.model.enums.QuizSortType;
-import com.balgoorm.balgoorm_backend.quiz.repository.CustomQuizRepository;
-import com.balgoorm.balgoorm_backend.quiz.repository.CustomQuizRepositoryImpl;
-import com.balgoorm.balgoorm_backend.quiz.repository.QuizRepository;
-import com.balgoorm.balgoorm_backend.quiz.repository.UserRecQuizRepository;
+import com.balgoorm.balgoorm_backend.quiz.repository.*;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,12 +30,15 @@ public class QuizServiceImpl implements QuizService{
     private final CustomQuizRepository customQuizRepository;
     private final UserRecQuizRepository userRecQuizRepository;
     private final UserRepository userRepository;
+    private final SolvedQuizRepository solvedQuizRepository;
 
     @Value("${quiz.list.size}")
     private int pageSize;
 
     @Override
-    public List<ResponseQuizList> getQuizList(QuizSortType sortType, List<Integer> levels, int page) {
+    public List<ResponseQuizList> getQuizList(QuizSortType sortType, List<Integer> levels, Long userId, int page) {
+
+        HashSet<Long> quizIdSet = solvedQuizRepository.findQuizIdsByUserId(userId);
 
         List<Quiz> quizList = customQuizRepository.getQuizListSorted(PageRequest.of(page, pageSize), levels, sortType);
 
@@ -48,6 +49,7 @@ public class QuizServiceImpl implements QuizService{
                     .quiz_level(quiz.getQuizLevel())
                     .quiz_rec_cnt(quiz.getQuizRecCnt())
                     .correct_rate(quiz.getSubmitCnt() == 0 ? 0 : quiz.getCorrectCnt() * 100 / quiz.getSubmitCnt())
+                    .isSolved(quizIdSet.contains(quiz.getQuizId()))
                     .build()).collect(Collectors.toList());
 
 

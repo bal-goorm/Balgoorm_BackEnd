@@ -114,6 +114,11 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String userId) {
+        // 관리자 아이디 체크
+        if ("admin".equals(userId)) {
+            throw new IllegalArgumentException("관리자 계정은 삭제할 수 없습니다.");
+        }
+
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         userRepository.delete(user);
