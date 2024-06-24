@@ -27,10 +27,10 @@ public class ChatController {
 //    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/join")
-    @SendTo("/sub/chat")
+    @SendTo("/sub/join")
     public String joinChatRoom(ChatRequest chatRequest) {
         log.info("Message: {}", chatRequest.getChatBody());
-        return  "님이 입장하셨습니다.";
+        return chatRequest.getSenderName() + chatRequest.getChatBody();
     }
 
     @MessageMapping("/chat")

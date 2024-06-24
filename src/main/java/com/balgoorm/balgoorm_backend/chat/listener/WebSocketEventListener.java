@@ -46,6 +46,6 @@ public class WebSocketEventListener {
 
     // "/sub/active-users" 구독시 소켓 연결, 해체시 현재 채팅방 참여 인원을 String 형태로 발송
     private void updateActiveUsers() {
-        simpMessagingTemplate.convertAndSend("/sub/chat", activeUsers.size());
+        simpMessagingTemplate.convertAndSend("/sub/active-users", activeUsers.size());
     }
 }
