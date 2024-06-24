@@ -9,6 +9,7 @@ import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -59,11 +60,13 @@ public class BoardController {
     }
 
     @DeleteMapping("/{id}")
-    public BoardResponseDTO deleteBoard(@PathVariable("id") Long boardId, Authentication authentication) {
+    public ResponseEntity<String> deleteBoard(@PathVariable("id") Long boardId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         boardService.deleteBoard(boardId, userDetails.getUsername());
-        return boardService.searchBoard(boardId); // 삭제 후에도 BoardResponseDTO 반환
+
+        return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
     }
+
 
     @PostMapping("/{id}/like")
     public String likeBoard(@PathVariable("id") Long boardId, Authentication authentication) {
