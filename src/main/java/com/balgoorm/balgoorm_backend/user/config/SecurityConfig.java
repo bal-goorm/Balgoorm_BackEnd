@@ -67,12 +67,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers( "/css/**", "/js/**", "/img/**", "/font/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/member/**", "/board/**").hasRole("USER")
-//                        .requestMatchers("/login","/signup").anonymous()
-//                                .requestMatchers("/api/login", "/api/signup", "/api/logout").permitAll()
-                                .anyRequest().permitAll() // 모든 요청 허용
+                        .requestMatchers( "/css/**", "/js/**", "/img/**", "/font/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/myinfo/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers("/api/login", "/api/signup", "/api/logout").permitAll()
+                        .anyRequest().authenticated() // 모든 요청 허용
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
