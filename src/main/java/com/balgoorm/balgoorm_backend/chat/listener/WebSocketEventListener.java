@@ -31,8 +31,8 @@ public class WebSocketEventListener {
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
         // 사용자 추가
-        log.info("웹소켓 연결 성공: {}", sessionId);
         activeUsers.add(sessionId);
+        log.info("웹소켓 연결 성공: {}", activeUsers.size());
         updateActiveUsers();
     }
 
@@ -41,20 +41,13 @@ public class WebSocketEventListener {
         // 사용자 제거
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        log.info("웹소켓 연결 해체: {}", sessionId);
         activeUsers.remove(sessionId);
+        log.info("웹소켓 연결 해체: {}", activeUsers.size());
         updateActiveUsers();
     }
 
-//    @SubscribeMapping("/sub/active-users")
-//    public void handleSubscription(SimpMessageHeaderAccessor accessor) {
-//        String sessionId = accessor.getSessionId();
-//        log.info("구독 성공: {}", sessionId);
-//        updateActiveUsers();
-//    }
-
     // "/sub/active-users" 구독시 소켓 연결, 해체시 현재 채팅방 참여 인원을 String 형태로 발송
     public void updateActiveUsers() {
-        simpMessagingTemplate.convertAndSend("api/sub/active-users", activeUsers.size());
+        simpMessagingTemplate.convertAndSend("/api/sub/active-users", activeUsers.size());
     }
 }

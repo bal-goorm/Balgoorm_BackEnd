@@ -32,14 +32,14 @@ public class ChatController {
     @MessageMapping("/join")
     @SendTo("/api/sub/join")
     public String joinChatRoom(ChatRequest chatRequest) {
-        log.info("Message: {}", chatRequest.getChatBody());
+        log.info("join: {}", chatRequest.getChatBody());
         return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 입장하셨습니다.";
     }
 
     @MessageMapping("/disconnect")
     @SendTo("/api/sub/disconnect")
     public String disConnectChatRoom(ChatRequest chatRequest) {
-        log.info("Message: {}", chatRequest.getChatBody());
+        log.info("disconnect: {}", chatRequest.getChatBody());
         return chatRequest.getSenderName() + ":" + chatRequest.getSenderName() + "님이 퇴장하셨습니다.";
     }
 
