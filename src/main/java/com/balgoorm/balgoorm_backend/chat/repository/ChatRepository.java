@@ -12,6 +12,6 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     //저장된 시간 기준 가장 최근 100개의 채팅 내역을 가져 옴
-    @Query("SELECT m FROM Chat m ORDER BY m.chatTime DESC")
+    @Query("SELECT m FROM Chat m ORDER BY m.chatId DESC")
     List<Chat> findLatelyChat(Pageable pageable);
 }

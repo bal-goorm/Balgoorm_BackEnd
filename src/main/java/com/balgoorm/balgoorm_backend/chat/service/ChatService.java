@@ -36,17 +36,6 @@ public class ChatService {
 
         return saved;
     }
-    public ChatResponse enterChat2(ChatRequest chatRequest) {
-        Chat chat = new Chat();
-        chat.setSenderName(chatRequest.getSenderName());
-        chat.setChatBody(chatRequest.getChatBody());
-        chat.setChatTime(LocalTime.now());
-
-        Chat saved = chatRepository.save(chat);
-        log.info("saved: {}", saved.getChatBody());
-
-        return ChatResponse.changeResponse(saved);
-    }
 
     public List<ChatResponse> getHistory() {
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -54,6 +43,7 @@ public class ChatService {
                 .stream()
                 .map(ChatResponse::changeResponse)
                 .collect(Collectors.toList());
+
     }
 
     public User getCurrentUser() {
