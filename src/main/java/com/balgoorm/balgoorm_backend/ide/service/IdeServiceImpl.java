@@ -54,40 +54,40 @@ public class IdeServiceImpl implements IdeService {
      * 어플리케이션 시작과 동시에 미리 사용할 dockerContainer 생성
      * @throws IOException
      */
-    @PostConstruct
-    public void createContainers() throws IOException, InterruptedException {
-        // 이미지 풀
-        String[] repos = {
-                "krmp-d2hub-idock.9rum.cc/dev-test/repo_aec62bbc5315",
-                "krmp-d2hub-idock.9rum.cc/dev-test/repo_abeb7ba1fbdf",
-                "krmp-d2hub-idock.9rum.cc/dev-test/repo_ae10f8d28ad9"
-        };
+   @PostConstruct
+   public void createContainers() throws IOException, InterruptedException {
+       // 이미지 풀
+       String[] repos = {
+               "krmp-d2hub-idock.9rum.cc/dev-test/repo_aec62bbc5315",
+               "krmp-d2hub-idock.9rum.cc/dev-test/repo_abeb7ba1fbdf",
+               "krmp-d2hub-idock.9rum.cc/dev-test/repo_ae10f8d28ad9"
+       };
 
-        for(int i = 0; i < repos.length; i++){
-            dockerClient.pullImageCmd(repos[i])
-                    .exec(new PullImageResultCallback())
-                    .awaitCompletion();
-        }
+       for(int i = 0; i < repos.length; i++){
+           dockerClient.pullImageCmd(repos[i])
+                   .exec(new PullImageResultCallback())
+                   .awaitCompletion();
+       }
 
-        //String[] repos = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
+       //String[] repos = {"openjdk-with-time", "gcc-with-time", "python-with-time"};
 
-        LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
+       LanguageType[] languages = {LanguageType.JAVA, LanguageType.CPP, LanguageType.PYTHON};
 
 
-        // 컨테이너를 생성하는 로직
-        for (int i = 0; i < repos.length; i++) {
-            String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
-            Files.createDirectories(Paths.get(projectDir));
+       // 컨테이너를 생성하는 로직
+       for (int i = 0; i < repos.length; i++) {
+           String projectDir = System.getProperty("user.dir") + "/code/" + getFileExtension(languages[i]);
+           Files.createDirectories(Paths.get(projectDir));
 
-            CreateContainerResponse container = dockerClient.createContainerCmd(repos[i])
-                    .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
-                    .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
-                    .withWorkingDir("/src")
-                    .exec();
-            log.info(getFileExtension(languages[i]) + " , " + container.getId());
-            containers.put(getFileExtension(languages[i]), container.getId());
-        }
-    }
+           CreateContainerResponse container = dockerClient.createContainerCmd(repos[i])
+                   .withHostConfig(new HostConfig().withBinds(new Bind(projectDir, new Volume("/src"))))
+                   .withCmd("/bin/sh", "-c", "while :; do sleep 1; done")
+                   .withWorkingDir("/src")
+                   .exec();
+           log.info(getFileExtension(languages[i]) + " , " + container.getId());
+           containers.put(getFileExtension(languages[i]), container.getId());
+       }
+   }
 
 
     /**

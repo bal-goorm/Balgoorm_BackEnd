@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 @Service
@@ -85,5 +87,12 @@ public class CommentService {
         Comment comment = like.getComment();
         comment.decrementLikes(); // 좋아요 수 감소
         commentRepository.save(comment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponseDTO> getCommentsByBoardId(Long boardId) {
+        return commentRepository.findByBoardBoardId(boardId).stream()
+                .map(CommentResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }

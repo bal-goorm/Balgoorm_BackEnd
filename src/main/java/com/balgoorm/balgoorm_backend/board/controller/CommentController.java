@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/board")
@@ -53,5 +55,10 @@ public class CommentController {
         Long userId = userDetails.getUserId();
         commentService.unlikeComment(commentId, userId);
         return "Unliked the comment";
+    }
+
+    @GetMapping("/{id}/comments")
+    public List<CommentResponseDTO> getComments(@PathVariable Long id) {
+        return commentService.getCommentsByBoardId(id);
     }
 }

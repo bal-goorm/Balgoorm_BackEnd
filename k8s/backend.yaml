@@ -15,7 +15,7 @@ spec:
       containers:
         - name: backend
           # 여러분의 backend image 주소를 입력해주세요.
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_d6ec2a314084
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_7133c442b571
           securityContext:
             privileged: true
           volumeMounts:
