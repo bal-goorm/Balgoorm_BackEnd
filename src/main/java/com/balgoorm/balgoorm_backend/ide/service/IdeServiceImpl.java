@@ -211,8 +211,7 @@ public class IdeServiceImpl implements IdeService {
                 return codeRunResponse;
             }
         }
-
-        // 코드의 실행시간을 체크하기 위한 time 명령어 추가
+        log.info("컴파일 완료");        // 코드의 실행시간을 체크하기 위한 time 명령어 추가
         String timeCommand = "/usr/bin/time -v " + runCommand;
 
         ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
@@ -223,10 +222,11 @@ public class IdeServiceImpl implements IdeService {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-
+        log.info("코드 실행중");
         boolean executionTimeout = execCommandWithTimeout(execCreateCmdResponse.getId(), outputStream, errorStream, 5, TimeUnit.SECONDS);
 
         if (executionTimeout) {
+            log.info("실행시간 초과");
             codeRunResponse.setErrorMessage("실행시간이 초과되었습니다...");
             stopContainer(containerId);
             cleanup(tempDirHost, containerId, tempDirContainer);
@@ -240,6 +240,7 @@ public class IdeServiceImpl implements IdeService {
 
         // 파이썬은 실행시점에 에러가 발생할 수 있기 때문에 이를 확인한다
         if (!lines[0].split(":")[0].trim().equals("Command being timed")) {
+            log.info("파이썬 오류 발견");
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < lines.length; i++) {
                 if (lines[i].split(":")[0].trim().equals("Command being timed")) {
@@ -247,11 +248,13 @@ public class IdeServiceImpl implements IdeService {
                 }
                 sb.append(lines[i]).append("\n");
             }
+            log.info(sb.toString());
             codeRunResponse.setErrorMessage(sb.toString());
             cleanup(tempDirHost, containerId, tempDirContainer);
             return codeRunResponse;
         }
 
+        log.info("실행시간, 메모리 사용률 체크");
         String runTime = "";
         String memoryUsage = "";
         for (String line : lines) {
