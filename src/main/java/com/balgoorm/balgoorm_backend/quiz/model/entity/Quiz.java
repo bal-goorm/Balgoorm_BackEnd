@@ -3,6 +3,8 @@ package com.balgoorm.balgoorm_backend.quiz.model.entity;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +41,7 @@ public class Quiz {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
+    @Cascade(CascadeType.ALL)
     private User user;
 
 }

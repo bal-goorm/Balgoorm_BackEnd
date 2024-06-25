@@ -4,6 +4,8 @@ import com.balgoorm.balgoorm_backend.ide.model.enums.LanguageType;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
 
@@ -35,10 +37,12 @@ public class SubmitRecord {
 
     @ManyToOne
     @JoinColumn(name = "QUIZ_ID")
+    @Cascade(CascadeType.ALL)
     private Quiz quiz;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
+    @Cascade(CascadeType.ALL)
     private User user;
 
 }
