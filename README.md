@@ -1,5 +1,5 @@
 # 발구름 WEB IDE - 백엔드
-![ERD](.image/발구름.jpg)
+(/image/발구름.jpg)
 
 **구름(goorm) 풀스택 개발자 성장 과정 7회차 발구름 조의 Web IDE 프로젝트**
 
@@ -35,7 +35,7 @@
 
 ## ERD
 
-![ERD](.image/IDEProject.png) <!-- 데이터베이스 ERD 이미지를 여기에 추가해주세요. -->
+![ERD](/image/IDEProject.png) <!-- 데이터베이스 ERD 이미지를 여기에 추가해주세요. -->
 
 ## 백엔드 멤버 소개
 
