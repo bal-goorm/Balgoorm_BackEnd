@@ -33,7 +33,7 @@
 
 ## 아키텍처
 
-![Service Architecture](#) <!-- 아키텍처 이미지를 여기에 추가해주세요. -->
+![Service Architecture](/image/아키택쳐.jpg) <!-- 아키텍처 이미지를 여기에 추가해주세요. -->
 
 ## ERD
 
