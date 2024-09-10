@@ -35,7 +35,7 @@
 
 ## ERD
 
-![ERD](.image/IDE_ERD.png) <!-- 데이터베이스 ERD 이미지를 여기에 추가해주세요. -->
+![ERD](.image/IDEProject.png) <!-- 데이터베이스 ERD 이미지를 여기에 추가해주세요. -->
 
 ## 백엔드 멤버 소개
 
