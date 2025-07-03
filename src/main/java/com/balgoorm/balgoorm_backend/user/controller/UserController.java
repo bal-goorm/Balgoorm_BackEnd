@@ -1,11 +1,9 @@
 package com.balgoorm.balgoorm_backend.user.controller;
 
 import com.balgoorm.balgoorm_backend.user.auth.CustomUserDetails;
-import com.balgoorm.balgoorm_backend.user.dto.request.UserLoginRequest;
-import com.balgoorm.balgoorm_backend.user.dto.request.UserSignupRequest;
-import com.balgoorm.balgoorm_backend.user.dto.request.UserUpdateRequest;
-import com.balgoorm.balgoorm_backend.user.dto.response.MyInfoResponseDTO;
-import com.balgoorm.balgoorm_backend.user.dto.response.UserResponseDTO;
+import com.balgoorm.balgoorm_backend.user.model.dto.request.UserSignupRequest;
+import com.balgoorm.balgoorm_backend.user.model.dto.request.UserUpdateRequest;
+import com.balgoorm.balgoorm_backend.user.model.dto.response.MyInfoResponseDTO;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
