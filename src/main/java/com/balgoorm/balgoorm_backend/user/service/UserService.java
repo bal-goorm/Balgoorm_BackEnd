@@ -126,7 +126,7 @@ public class UserService {
     public MyInfoResponseDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디의 유저를 찾을 수 없습니다. " + userId));
-        return new MyInfoResponseDTO(user);
+        return MyInfoResponseDTO.from(user);
     }
 
 }
