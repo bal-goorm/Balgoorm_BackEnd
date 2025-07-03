@@ -1,4 +1,4 @@
-package com.balgoorm.balgoorm_backend.user.dto.response;
+package com.balgoorm.balgoorm_backend.user.model.dto.response;
 
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import lombok.Getter;
@@ -6,24 +6,19 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class UserResponseDTO {
-    private Long id;
+public class MyInfoResponseDTO {
     private String userId;
-//    private String password;
     private String nickname;
     private String email;
     private LocalDateTime createDate;
-    private String role;
-//    private String boards;
 
-    public UserResponseDTO(User user) {
-        this.id = user.getId();
+
+    public MyInfoResponseDTO(User user) {
+
         this.userId = user.getUserId();
-//        this.password = user.getUserPassword();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.createDate = user.getCreateDate();
-        this.role = user.getRole().toString();
-//        this.boards = user.getBoards().toString();
+
     }
 }

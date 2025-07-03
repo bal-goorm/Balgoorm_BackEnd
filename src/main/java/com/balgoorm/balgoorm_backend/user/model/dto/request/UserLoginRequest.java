@@ -1,4 +1,4 @@
-package com.balgoorm.balgoorm_backend.user.dto.request;
+package com.balgoorm.balgoorm_backend.user.model.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

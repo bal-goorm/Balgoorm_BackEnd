@@ -1,10 +1,8 @@
 package com.balgoorm.balgoorm_backend.user.service;
 
-import com.balgoorm.balgoorm_backend.user.dto.request.UserLoginRequest;
-import com.balgoorm.balgoorm_backend.user.dto.request.UserSignupRequest;
-import com.balgoorm.balgoorm_backend.user.dto.request.UserUpdateRequest;
-import com.balgoorm.balgoorm_backend.user.dto.response.MyInfoResponseDTO;
-import com.balgoorm.balgoorm_backend.user.dto.response.UserResponseDTO;
+import com.balgoorm.balgoorm_backend.user.model.dto.request.UserSignupRequest;
+import com.balgoorm.balgoorm_backend.user.model.dto.request.UserUpdateRequest;
+import com.balgoorm.balgoorm_backend.user.model.dto.response.MyInfoResponseDTO;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.model.entity.UserRole;
 import com.balgoorm.balgoorm_backend.user.repository.UserRepository;
