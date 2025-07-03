@@ -3,6 +3,7 @@ package com.balgoorm.balgoorm_backend.user.service;
 import com.balgoorm.balgoorm_backend.user.model.dto.request.UserSignupRequest;
 import com.balgoorm.balgoorm_backend.user.model.dto.request.UserUpdateRequest;
 import com.balgoorm.balgoorm_backend.user.model.dto.response.MyInfoResponseDTO;
+import com.balgoorm.balgoorm_backend.user.model.dto.response.UserResponseDTO;
 import com.balgoorm.balgoorm_backend.user.model.entity.User;
 import com.balgoorm.balgoorm_backend.user.model.entity.UserRole;
 import com.balgoorm.balgoorm_backend.user.repository.UserRepository;
@@ -11,10 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -28,38 +26,30 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /** 전체 회원 리스트 (DTO 변환) */
     @Transactional(readOnly = true)
-    public List<User> getAllMembers() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllMembers() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDTO::from)
+                .toList();
     }
 
+    /** 전체 회원 수 */
     @Transactional(readOnly = true)
     public long getTotalUsers() {
         return userRepository.count();
     }
 
-
-
+    /** 회원가입 (중복/검증 체크, 엔티티 자동 생성일 적용) */
     @Transactional
     public void signup(UserSignupRequest request) {
-        if (request.getUserId().isEmpty()) {
-            throw new IllegalArgumentException("유저 아이디가 비어있습니다.");
-        } else if (userRepository.existsByUserId(request.getUserId())) {
+        if (userRepository.existsByUserId(request.getUserId())) {
             throw new IllegalArgumentException("유저 아이디가 중복됩니다.");
         }
-
-        if (request.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("비밀번호가 비어있습니다.");
-        }
-        if (request.getNickname().isEmpty()) {
-            throw new IllegalArgumentException("닉네임이 비어있습니다.");
-        } else if (userRepository.existsByNickname(request.getNickname())) {
+        if (userRepository.existsByNickname(request.getNickname())) {
             throw new IllegalArgumentException("닉네임이 중복됩니다.");
         }
-
-        if (request.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("이메일이 비어있습니다.");
-        } else if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("이메일이 중복됩니다.");
         }
 
@@ -68,60 +58,53 @@ public class UserService {
                 .userPassword(passwordEncoder.encode(request.getPassword()))
                 .nickname(request.getNickname())
                 .email(request.getEmail())
-                .createDate(LocalDateTime.now())
-                .role(UserRole.USER) // 기본 역할을 USER로 설정
+                .role(UserRole.USER)
                 .build();
         userRepository.save(user);
     }
 
-
+    /** 회원 정보 수정 (닉네임/비밀번호) */
     @Transactional
     public void updateUser(UserUpdateRequest request, String userId) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            boolean updated = false;
-            if (!request.getNickname().isEmpty() && !request.getNickname().equals(user.getNickname())) {
-                if (userRepository.existsByNickname(request.getNickname())) {
-                    throw new IllegalArgumentException("닉네임이 중복됩니다.");
-                }
-                user.setNickname(request.getNickname());
-                updated = true;
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        // 닉네임 변경
+        if (request.getNickname() != null && !request.getNickname().isBlank()
+                && !request.getNickname().equals(user.getNickname())) {
+            if (userRepository.existsByNickname(request.getNickname())) {
+                throw new IllegalArgumentException("닉네임이 중복됩니다.");
             }
-            if (!request.getPassword().isEmpty()) {
-                user.setUserPassword(passwordEncoder.encode(request.getPassword()));
-                updated = true;
-            }
-            if (updated) {
-                userRepository.save(user);
-            }
-        } else {
-            throw new IllegalArgumentException("유저를 찾을 수 없습니다.");
+            user.setNickname(request.getNickname());
         }
+        // 비밀번호 변경
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setUserPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        userRepository.save(user);
     }
 
+    /** 비밀번호 일치 확인 */
     @Transactional(readOnly = true)
     public boolean checkPassword(String userId, String rawPassword) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return passwordEncoder.matches(rawPassword, user.getUserPassword());
-        }
-        return false;
+        return userRepository.findByUserId(userId)
+                .map(user -> passwordEncoder.matches(rawPassword, user.getUserPassword()))
+                .orElse(false);
     }
 
+    /** 회원 삭제 (관리자 보호) */
     @Transactional
     public void deleteUser(String userId) {
-        // 관리자 아이디 체크
         if ("admin".equals(userId)) {
             throw new IllegalArgumentException("관리자 계정은 삭제할 수 없습니다.");
         }
-
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         userRepository.delete(user);
     }
 
+    /** 내 정보 조회 (DTO 반환) */
     @Transactional(readOnly = true)
     public MyInfoResponseDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
