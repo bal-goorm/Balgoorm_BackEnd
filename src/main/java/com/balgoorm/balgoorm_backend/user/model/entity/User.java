@@ -3,9 +3,11 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
-
+@Setter
 @Getter
 @Entity
 @NoArgsConstructor
@@ -19,9 +21,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String userId;
 
+    @Setter
     @Column(nullable = false)
     private String userPassword;
 
+    @Setter
     @Column(nullable = false)
     private String nickname;
 
