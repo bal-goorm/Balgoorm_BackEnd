@@ -1,0 +1,54 @@
+name: Build & Deploy Balgoorm BE
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'src/**', 'Dockerfile', '.github/workflows/**' ]
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPO: 997252008275.dkr.ecr.ap-northeast-2.amazonaws.com/balgoorm-backend
+  LIGHTSAIL_SERVICE: balgoorm-be
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Build & push to ECR
+        run: |
+          docker build -t balgoorm-backend:${{ github.sha }} .
+          aws ecr get-login-password --region $AWS_REGION | \
+            docker login --username AWS --password-stdin 997252008275.dkr.ecr.$AWS_REGION.amazonaws.com
+          docker tag balgoorm-backend:${{ github.sha }} $ECR_REPO:${{ github.sha }}
+          docker push $ECR_REPO:${{ github.sha }}
+
+      - name: Deploy latest image to Lightsail
+        run: |
+          aws lightsail push-container-image \
+            --service-name $LIGHTSAIL_SERVICE \
+            --image $ECR_REPO:${{ github.sha }} \
+            --label ${{ github.sha }}
+
+          cat <<EOF > tmp.json
+          {
+            "$LIGHTSAIL_SERVICE": {
+              "image": "$ECR_REPO:${{ github.sha }}",
+              "ports": { "8080": "HTTP" }
+            }
+          }
+          EOF
+
+          aws lightsail create-container-service-deployment \
+            --service-name $LIGHTSAIL_SERVICE \
+            --containers file://tmp.json \
+            --public-endpoint '{"containerName":"'"$LIGHTSAIL_SERVICE"'","containerPort":8080,"healthCheck":{"path":"/api/test","successCodes":"200-399"}}'
